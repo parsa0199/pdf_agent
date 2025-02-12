@@ -52,3 +52,8 @@ config.ini
 
 # Dependencies
 node_modules/
+
+# AutoGen specific
+.autogen/
+*_cache/
+.oai_cache/

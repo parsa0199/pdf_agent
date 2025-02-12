@@ -8,7 +8,7 @@ MERCHANDISE_URL = "https://bi.kiagostar.com/api/api/merchandise"
 # اطلاعات کاربری
 USERNAME = "api@kiagostar.com"
 PASSWORD = "Api&&666525@@09"
-MERCHANDISE_ID = 1011900027  # شماره محصول مورد نظر
+MERCHANDISE_ID = 1506250951  # شماره محصول مورد نظر
 
 def get_merchandise_info(username, password, merchandise_id):
     try:
