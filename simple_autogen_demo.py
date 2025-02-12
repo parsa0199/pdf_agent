@@ -14,6 +14,11 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import Paragraph
+from reportlab.lib.units import inch
+
+
+
+
 
 load_dotenv()
 
@@ -24,7 +29,7 @@ MODEL = os.getenv("MODEL") or "deepseek/deepseek-r1"
 TEMPERATURE = float(os.getenv("TEMPERATURE") or 0.7)
 MAX_TOKENS = int(os.getenv("MAX_TOKENS") or 2000)
 TIMEOUT = int(os.getenv("TIMEOUT") or 60) # Increased timeout
-FONT_SIZE = int(os.getenv("FONT_SIZE") or 12)
+FONT_SIZE = int(os.getenv("FONT_SIZE") or 14)
 FONT_COLOR = (0, 0, 0)  # Black color (fixed)
 
 CONTEXT = '''
@@ -77,7 +82,7 @@ def get_deepseek_translation(text: str) -> Optional[str]:
                         logging.error(f"Invalid JSON: {decoded_line[:50]}...")
                         continue
 
-        print()
+        
         return translation
 
     except requests.exceptions.RequestException as e:
@@ -94,7 +99,7 @@ def get_deepseek_translation(text: str) -> Optional[str]:
 
 
 def generate_rtl_pdf(text, font_path, output_filename="rtl_text.pdf", font_size=12, margin=50):
-    """Generates a PDF with right-to-left (RTL) JUSTIFIED text, top-to-bottom, correct order, mixed content support."""
+    """Generates a PDF with RTL justified text and page numbers."""
 
     reshaped_text = reshape(text)
     final_text = get_display(reshaped_text)
@@ -106,8 +111,6 @@ def generate_rtl_pdf(text, font_path, output_filename="rtl_text.pdf", font_size=
     available_width = page_width - 2 * margin
 
     c.setFont("ArabicFont", font_size)
-
-    y = page_height - margin
 
     lines = []
     current_line = ""
@@ -127,20 +130,44 @@ def generate_rtl_pdf(text, font_path, output_filename="rtl_text.pdf", font_size=
 
     lines.reverse()  # Reverse for RTL line order
 
+    page_num = 1  # Initialize page number
+    y = page_height - margin
+
     for line in lines:
         text_width = c.stringWidth(line, "ArabicFont", font_size)
         x = page_width - margin - text_width  # Calculate RTL starting position
 
-        c.drawString(x, y, line)  # Draw at the calculated position
+        c.drawString(x, y, line)
         y -= font_size * 1.2
 
         if y < margin:
+            draw_page_number(c, page_num, page_width, page_height)  # Draw page number
             c.showPage()
             y = page_height - margin
             c.setFont("ArabicFont", font_size)
+            page_num += 1  # Increment page number
 
+    draw_page_number(c, page_num, page_width, page_height)  # Draw page number for the last page
     c.save()
     print(f"PDF saved as {output_filename}")
+
+
+def draw_page_number(canvas, page_num, page_width, page_height):
+    """Draws the page number badge."""
+    canvas.setFont("Helvetica", 10)  # Use a standard font for page numbers
+    page_num_text = str(page_num)
+    text_width = canvas.stringWidth(page_num_text, "Helvetica", 10)
+
+    # Calculate badge position (bottom-right corner) with some padding
+    x = page_width - inch - text_width - 10  # Adjust padding as needed
+    y = inch - 60
+    
+    # Draw a rounded rectangle as a badge background
+    canvas.roundRect(x - 2, y - 2, x + text_width + 2, y + 10, 2, stroke=1, fill=0) # Adjust padding and radius as needed
+
+    canvas.setFillColorRGB(0,0,0) # Set text color to black
+    canvas.drawString(x, y, page_num_text)
+
 
 
 
