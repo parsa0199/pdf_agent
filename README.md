@@ -1,4 +1,4 @@
-# PDF Translator (any language to Persian)
+# PDF Translator (any to Persian)
 
 ## Overview
 This Python script extracts text from a PDF file, translates it from English to Persian using the OpenRouter AI API, and generates a new right-to-left (RTL) formatted PDF with the translated text. The output PDF includes proper text formatting and page numbers.
@@ -12,7 +12,7 @@ This Python script extracts text from a PDF file, translates it from English to 
 
 ## Requirements
 - Python 3.7+
-- A valid OpenRouter API key
+- A valid OpenRouter API key (I used gemini-2.0-flash because it is completely free and capable of translating).
 - Required dependencies (see below)
 
 ## Installation
@@ -39,7 +39,7 @@ This Python script extracts text from a PDF file, translates it from English to 
    ```ini
    OPENROUTER_API_KEY=your_api_key_here
    API_URL=https://openrouter.ai/api/v1/chat/completions
-   MODEL=deepseek/deepseek-r1
+   MODEL=google/gemini-2.0-flash-thinking-exp:free
    TEMPERATURE=0.7
    MAX_TOKENS=2000
    TIMEOUT=60
@@ -87,10 +87,14 @@ This Python script extracts text from a PDF file, translates it from English to 
 - Support additional languages.
 - Implement a GUI for easier usage.
 
+## Open Source Love ❤️
+
+This project is open-source because we believe in the power of collaboration, knowledge sharing, and accessibility. The open-source community thrives on generosity, innovation, and the belief that technology should be available to everyone. Join us in making the world a better place—one translated document at a time!
+
 ## License
 This project is licensed under the MIT License.
 
 ---
 
-*Made with ❤️ by [parsa0199 using gemini ](https://github.com/parsa0199)*
+*Made with ❤️ by [Your Name](https://github.com/parsa0199)*
 
