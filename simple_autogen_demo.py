@@ -12,6 +12,8 @@ from reportlab.pdfbase import pdfmetrics  # Import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.platypus import Paragraph
 
 load_dotenv()
 
@@ -87,51 +89,54 @@ def get_deepseek_translation(text: str) -> Optional[str]:
 
 
 def generate_rtl_pdf(text, font_path, output_filename="rtl_text.pdf", font_size=12, margin=50):
-    """Generates a PDF with right-to-left (RTL) text using reportlab."""
+    """Generates a PDF with right-to-left (RTL) JUSTIFIED text, top-to-bottom, correct order, mixed content support."""
 
     reshaped_text = reshape(text)
     final_text = get_display(reshaped_text)
 
     c = canvas.Canvas(output_filename, pagesize=letter)
     pdfmetrics.registerFont(TTFont('ArabicFont', font_path))
-    c.setFont("ArabicFont", font_size)
 
     page_width, page_height = letter
     available_width = page_width - 2 * margin
 
+    c.setFont("ArabicFont", font_size)
+
+    y = page_height - margin
+
     lines = []
     current_line = ""
-
     words = final_text.split()
 
     for word in words:
-        test_line = current_line + " " + word if current_line else word
+        test_line = (current_line + " " + word).strip() if current_line else word
         text_width = c.stringWidth(test_line, "ArabicFont", font_size)
 
         if text_width <= available_width:
             current_line = test_line
         else:
-            lines.append(current_line.strip())
+            lines.append(current_line)
             current_line = word
 
-    lines.append(current_line.strip())
+    lines.append(current_line)
 
-    lines.reverse()
-
-    y_position = page_height - margin
-    line_height = font_size * 1.2
+    lines.reverse()  # Reverse for RTL line order
 
     for line in lines:
-        c.drawString(margin, y_position, line)
-        y_position -= line_height
+        text_width = c.stringWidth(line, "ArabicFont", font_size)
+        x = page_width - margin - text_width  # Calculate RTL starting position
 
-        if y_position < margin:
+        c.drawString(x, y, line)  # Draw at the calculated position
+        y -= font_size * 1.2
+
+        if y < margin:
             c.showPage()
-            y_position = page_height - margin
+            y = page_height - margin
             c.setFont("ArabicFont", font_size)
 
     c.save()
     print(f"PDF saved as {output_filename}")
+
 
 
 def translate_pdf(file_path: str) -> None:
