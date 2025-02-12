@@ -57,3 +57,8 @@ node_modules/
 .autogen/
 *_cache/
 .oai_cache/
+
+
+#pdf files
+
+*.pdf
