@@ -27,6 +27,11 @@ TIMEOUT = int(os.getenv("TIMEOUT") or 60) # Increased timeout
 FONT_SIZE = int(os.getenv("FONT_SIZE") or 12)
 FONT_COLOR = (0, 0, 0)  # Black color (fixed)
 
+CONTEXT = '''
+Translate the above text to Persian. Respond with only the translation, nothing else. 
+
+'''
+
 HEADERS = {
     "Authorization": f"Bearer {OPENROUTER_API_KEY}",
     "Content-Type": "application/json",
@@ -42,7 +47,7 @@ logging.basicConfig(level=logging.ERROR, format="%(asctime)s - %(levelname)s - %
 def get_deepseek_translation(text: str) -> Optional[str]:
     data = {
         "model": MODEL,
-        "messages": [{"role": "user", "content": f"{text}\nTranslate the above text to Persian. Respond with only the translation, nothing else."}],
+        "messages": [{"role": "user", "content": f"{text}\n {CONTEXT}"}],
         "temperature": TEMPERATURE,
         "max_tokens": MAX_TOKENS,
         "stream": True,
@@ -172,7 +177,7 @@ def translate_pdf(file_path: str) -> None:
 
     base_name, _ = os.path.splitext(os.path.basename(file_path))
     output_pdf_path = f"{base_name}_translation.pdf"
-    font_path = './static/fonts/NotoSansArabic_Condensed-Black.ttf'  # Path to your font
+    font_path = './static/fonts/NotoSansArabic-Regular.ttf'  # Path to your font
 
     all_text = ""
     for translation in translations:
