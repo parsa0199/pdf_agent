@@ -96,5 +96,5 @@ This project is licensed under the MIT License.
 
 ---
 
-*Made with ❤️ by [Your Name](https://github.com/parsa0199)*
+*Made with ❤️ by [parsa0199](https://github.com/parsa0199)*
 
